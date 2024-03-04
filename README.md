@@ -4,15 +4,13 @@
 
 1. Clone this repository: `git clone https://github.com/beniusis/diabetr.git`
 2. Navigate to the project's directory: `cd diabetr`
-3. Create virtual environment: `py -m venv .venv`
-4. Activate the virtual environment.
+3. Create the virtual environment and activate it:
 
-```
-If you're using bash/zsh, run this command: source .venv/bin/activate
-If you're using PowerShell (Windows), run this command: .venv/Scripts/Activate.ps1
-If you're using PowerShell (POSIX), run this command: .venv/bin/Activate.ps1
+```sh
+py -m venv .venv
+.venv/Scripts/Activate.ps1
 ```
 
-5. Install the required dependencies: `pip install -r requirements.txt`
-6. Register _[here](https://developer.edamam.com/edamam-nutrition-api)_ to get your `API` key from `edamam`
-7. Rename `rename_to.env` to `.env` and set `NUTRITION_API_KEY` value to your `API` key
+4. Install the required dependencies: `pip install -r requirements.txt`
+5. Register _[here](https://calorieninjas.com)_ to get your `API` key from `CalorieNinjas`
+6. Rename `rename_to.env` to `.env` and set your `API` key value to `NUTRITION_API_KEY`
