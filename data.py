@@ -1,7 +1,9 @@
+import csv
+import os
 from dataclasses import dataclass
 from enum import Enum
-from constants import INSULIN_DOSE_FIELDNAMES
-import csv
+from datetime import datetime
+from constants import INSULIN_DOSE_FIELDNAMES, INJECTION_FIELDNAMES
 from tabulate import tabulate
 
 
@@ -134,4 +136,89 @@ class InsulinDose:
                 headers=["Insulin Type", "Units/ml", "Carbs (g)"],
                 tablefmt="rounded_grid",
             ),
+        )
+
+
+@dataclass
+class Injection:
+    """
+    Data class for reading and creating insulin injection information.
+
+    Attributes:
+        insulin_type (str): Type of insulin.
+        units_injected (int): Number of units of insulin to inject.
+        date_timestamp (datetime): Date and time of injection.
+    """
+
+    insulin_type: str
+    units_injected: int
+    date_timestamp: datetime
+
+    @property
+    def insulin_type(self):
+        return self._insulin_type
+
+    @insulin_type.setter
+    def insulin_type(self, insulin_type):
+        if insulin_type not in [InsulinType.SHORT.value, InsulinType.LONG.value]:
+            raise ValueError("insulin_type must be either 'short' or 'long'")
+        self._insulin_type = insulin_type
+
+    @property
+    def units_injected(self):
+        return self._units_injected
+
+    @units_injected.setter
+    def units_injected(self, units_injected):
+        if units_injected <= 0:
+            raise ValueError("units_injected must be a positive number.")
+        self._units_injected = units_injected
+
+    @property
+    def date_timestamp(self):
+        return self._date_timestamp
+
+    @date_timestamp.setter
+    def date_timestamp(self, date_timestamp):
+        if not isinstance(date_timestamp, datetime):
+            raise ValueError("date_timestamp must be a datetime object.")
+        self._date_timestamp = date_timestamp
+
+    def to_dict(self):
+        return {
+            "insulin_type": self.insulin_type,
+            "units_injected": self.units_injected,
+            "date_timestamp": self.date_timestamp,
+        }
+
+    @staticmethod
+    def read_injections():
+        if not os.path.exists("files/injections.csv"):
+            raise FileNotFoundError("injections.csv file does not exist.")
+
+        injections = []
+        with open("files/injections.csv", "r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                injections.append(
+                    Injection(
+                        row["insulin_type"],
+                        row["units_injected"],
+                        row["date_timestamp"],
+                    )
+                )
+        return injections
+
+    def save(self):
+        if not os.path.exists("files/injections.csv"):
+            with open("files/injections.csv", "w", newline="") as file:
+                writer = csv.DictWriter(file, fieldnames=INJECTION_FIELDNAMES)
+                writer.writeheader()
+
+        with open("files/injections.csv", "a", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=INJECTION_FIELDNAMES)
+            writer.writerow(self.to_dict())
+
+        print(
+            f"{BColors.OKGREEN}Injection data has been saved successfully.{BColors.ENDC}"
         )

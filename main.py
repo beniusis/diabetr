@@ -27,10 +27,13 @@ def main():
     elif args["--dose"]:
         while True:
             utils.show_insulin_dose_menu()
-            menu_number = utils.get_insulin_dose_menu_input()
+            menu_number = utils.get_menu_input()
             utils.handle_insulin_dose_menu_input(menu_number)
     elif args["--injection"]:
-        ...
+        while True:
+            utils.show_insulin_injection_menu()
+            menu_number = utils.get_menu_input()
+            utils.handle_insulin_injection_menu_input(menu_number)
 
 
 if __name__ == "__main__":
