@@ -58,3 +58,10 @@ class Dose:
             "insulin_amount": self.insulin_amount,
             "carbs_amount": self.carbs_amount,
         }
+
+    def to_string_list(self):
+        return [
+            self.type.capitalize(),
+            str(self.insulin_amount),
+            str(self.carbs_amount),
+        ]

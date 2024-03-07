@@ -11,4 +11,6 @@ MAIN_MENU_OPTIONS = [
 DATETIME_FORMAT = "%Y-%m-%d %H:%M"
 INJECTIONS_FIELDNAMES = ["type", "amount", "timestamp"]
 DOSES_FIELDNAMES = ["type", "insulin_amount", "carbs_amount"]
+TABLE_STYLE = "rounded_grid"
 NUTRIENTS_TABLE_HEADERS = ["Food", "Calories", "Fat", "Carbohydrates", "Protein"]
+DOSES_TABLE_HEADERS = ["Type", "Insulin Amount", "For Amount of Carbohydrates"]

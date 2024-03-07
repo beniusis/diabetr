@@ -5,7 +5,13 @@ from tabulate import tabulate
 from decouple import config
 from colors import Colors
 from food import Food
-from constants import NUTRITION_API_BASE_URL, DATETIME_FORMAT, NUTRIENTS_TABLE_HEADERS
+from constants import (
+    NUTRITION_API_BASE_URL,
+    DATETIME_FORMAT,
+    TABLE_STYLE,
+    NUTRIENTS_TABLE_HEADERS,
+    DOSES_TABLE_HEADERS,
+)
 
 
 def convert_string_to_datetime(date_string: str) -> datetime:
@@ -131,4 +137,8 @@ def print_table_of_nutrients(food_list: list):
     Args:
         food_list (list): A list of food with nutrients values.
     """
-    print(tabulate(food_list, NUTRIENTS_TABLE_HEADERS, "rounded_grid"))
+    print(tabulate(food_list, NUTRIENTS_TABLE_HEADERS, TABLE_STYLE))
+
+
+def print_table_of_doses(doses_list: list):
+    print(tabulate(doses_list, DOSES_TABLE_HEADERS, TABLE_STYLE))

@@ -25,7 +25,9 @@ def main():
             food_list = helpers.get_formatted_food_list(response)
             helpers.print_table_of_nutrients(food_list)
         elif selection == 1:
-            ...
+            dfh = DosesFileHandler("files/doses.csv")
+            doses = dfh.read_doses()
+            helpers.print_table_of_doses(doses)
         elif selection == 2:
             ...
         elif selection == 3:
