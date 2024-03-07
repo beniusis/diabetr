@@ -4,6 +4,7 @@ from simple_term_menu import TerminalMenu
 from constants import MAIN_MENU_OPTIONS
 from colors import Colors
 from file_handlers import DosesFileHandler, InjectionsFileHandler
+from injection import Injection
 
 
 def main():
@@ -41,7 +42,12 @@ def main():
             else:
                 helpers.print_table_of_todays_injections(injections)
         elif selection == 5:
-            ...
+            insulin_type_input = helpers.ask_the_user_to_input_the_insulin_type()
+            amount_input = helpers.ask_the_user_to_input_the_insulin_amount()
+            ifh = InjectionsFileHandler("files/injections.csv")
+            current_datetime = helpers.get_current_date_and_time()
+            injection = Injection(insulin_type_input, amount_input, current_datetime)
+            ifh.save_new_injection(injection)
         elif selection == 6 or selection == None:
             main_menu_exit = True
 

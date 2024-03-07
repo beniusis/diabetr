@@ -51,7 +51,7 @@ def get_current_date() -> date:
 
 def ask_user_to_input_the_food() -> str:
     """
-    Asks the user to input the food and returns it.
+    Prompts the user to input the food and returns its value.
 
     Returns:
         str: Food list as a text.
@@ -159,3 +159,55 @@ def print_table_of_todays_injections(injections_list: list):
         injections_list (list): A list of today's injections.
     """
     print(tabulate(injections_list, INJECTIONS_TABLE_HEADERS, TABLE_STYLE))
+
+
+def ask_the_user_to_input_the_insulin_type() -> str:
+    """
+    Prompts the user to input the insulin type and returns its value.
+
+    Returns:
+        str: Insulin type ('short' or 'long').
+
+    Raises:
+        ValueError: if `type` is not 'short' or 'long'.
+    """
+    while True:
+        try:
+            insulin_type = input(
+                f"{Colors.HEADER}Enter the type of insulin (short, long): {Colors.ENDC}"
+            )
+            if not insulin_type:
+                raise ValueError(
+                    f"{Colors.WARNING}Insulin type cannot be left empty!{Colors.ENDC}"
+                )
+            elif insulin_type not in ["short", "long"]:
+                raise ValueError(
+                    f"{Colors.WARNING}Insulin's type must be either 'short' or 'long'.{Colors.ENDC}"
+                )
+            return insulin_type
+        except ValueError as e:
+            print(e)
+
+
+def ask_the_user_to_input_the_insulin_amount() -> int:
+    """
+    Prompts the user to input the insulin amount and returns its value.
+
+    Returns:
+        int: Insulin amount (units/ml).
+
+    Raises:
+        ValueError: if `amount` is empty.
+    """
+    while True:
+        try:
+            amount = int(
+                input(f"{Colors.HEADER}Amount of insulin injected: {Colors.ENDC}")
+            )
+            if not amount or amount <= 0:
+                raise ValueError
+            return amount
+        except ValueError:
+            print(
+                f"{Colors.WARNING}Amount of insulin must be a valid positive number!{Colors.ENDC}"
+            )
