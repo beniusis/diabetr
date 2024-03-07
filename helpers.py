@@ -61,12 +61,14 @@ def ask_user_to_input_the_food() -> str:
     """
     while True:
         try:
-            user_input = input(f"{Colors.HEADER}Enter the food: {Colors.ENDC}").strip()
+            user_input = input(
+                f"{Colors.HEADER}  Enter the food: {Colors.ENDC}"
+            ).strip()
             if not user_input:
                 raise ValueError
             return user_input
         except ValueError:
-            print(f"{Colors.WARNING}Food list cannot be empty!{Colors.ENDC}")
+            print(f"{Colors.WARNING}  Food list cannot be empty!{Colors.ENDC}")
 
 
 def get_nutrition_analysis(query: str) -> dict | str:
@@ -138,7 +140,12 @@ def print_table_of_nutrients(food_list: list):
     Args:
         food_list (list): A list of food with nutrients values.
     """
-    print(tabulate(food_list, NUTRIENTS_TABLE_HEADERS, TABLE_STYLE))
+    if len(food_list) == 1:
+        print(
+            f"{Colors.WARNING}  Could not calculate the nutrients since the provided food input was unknown!{Colors.ENDC}\n"
+        )
+    else:
+        print(tabulate(food_list, NUTRIENTS_TABLE_HEADERS, TABLE_STYLE))
 
 
 def print_table_of_doses(doses_list: list):
@@ -158,7 +165,10 @@ def print_table_of_todays_injections(injections_list: list):
     Args:
         injections_list (list): A list of today's injections.
     """
-    print(tabulate(injections_list, INJECTIONS_TABLE_HEADERS, TABLE_STYLE))
+    if injections_list == None:
+        print(f"{Colors.WARNING}  No injections were saved today!\n{Colors.ENDC}")
+    else:
+        print(tabulate(injections_list, INJECTIONS_TABLE_HEADERS, TABLE_STYLE))
 
 
 def ask_the_user_to_input_the_insulin_type() -> str:
@@ -174,15 +184,15 @@ def ask_the_user_to_input_the_insulin_type() -> str:
     while True:
         try:
             insulin_type = input(
-                f"{Colors.HEADER}Enter the type of insulin (short, long): {Colors.ENDC}"
+                f"{Colors.HEADER}  Enter the type of insulin (short, long): {Colors.ENDC}"
             )
             if not insulin_type:
                 raise ValueError(
-                    f"{Colors.WARNING}Insulin type cannot be left empty!{Colors.ENDC}"
+                    f"{Colors.WARNING}  Insulin type cannot be left empty!{Colors.ENDC}"
                 )
             elif insulin_type not in ["short", "long"]:
                 raise ValueError(
-                    f"{Colors.WARNING}Insulin's type must be either 'short' or 'long'.{Colors.ENDC}"
+                    f"{Colors.WARNING}  Insulin's type must be either 'short' or 'long'.{Colors.ENDC}"
                 )
             return insulin_type
         except ValueError as e:
@@ -202,12 +212,12 @@ def ask_the_user_to_input_the_insulin_amount() -> int:
     while True:
         try:
             amount = int(
-                input(f"{Colors.HEADER}Amount of insulin injected: {Colors.ENDC}")
+                input(f"{Colors.HEADER}  Amount of insulin injected: {Colors.ENDC}")
             )
             if not amount or amount <= 0:
                 raise ValueError
             return amount
         except ValueError:
             print(
-                f"{Colors.WARNING}Amount of insulin must be a valid positive number!{Colors.ENDC}"
+                f"{Colors.WARNING}  Amount of insulin must be a valid positive number!{Colors.ENDC}"
             )

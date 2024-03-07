@@ -22,10 +22,13 @@ def main():
     while not main_menu_exit:
         selection = main_menu.show()
         if selection == 0:
-            food_input = helpers.ask_user_to_input_the_food()
-            response = helpers.get_nutrition_analysis(food_input)
-            food_list = helpers.get_formatted_food_list(response)
-            helpers.print_table_of_nutrients(food_list)
+            try:
+                food_input = helpers.ask_user_to_input_the_food()
+                response = helpers.get_nutrition_analysis(food_input)
+                food_list = helpers.get_formatted_food_list(response)
+                helpers.print_table_of_nutrients(food_list)
+            except KeyboardInterrupt:
+                pass
         elif selection == 1:
             dfh = DosesFileHandler("files/doses.csv")
             doses = dfh.read_doses()
@@ -37,17 +40,19 @@ def main():
         elif selection == 4:
             ifh = InjectionsFileHandler("files/injections.csv")
             injections = ifh.read_todays_injections()
-            if injections == None:
-                print(f"{Colors.WARNING}No injections were saved today!\n{Colors.ENDC}")
-            else:
-                helpers.print_table_of_todays_injections(injections)
+            helpers.print_table_of_todays_injections(injections)
         elif selection == 5:
-            insulin_type_input = helpers.ask_the_user_to_input_the_insulin_type()
-            amount_input = helpers.ask_the_user_to_input_the_insulin_amount()
-            ifh = InjectionsFileHandler("files/injections.csv")
-            current_datetime = helpers.get_current_date_and_time()
-            injection = Injection(insulin_type_input, amount_input, current_datetime)
-            ifh.save_new_injection(injection)
+            try:
+                insulin_type_input = helpers.ask_the_user_to_input_the_insulin_type()
+                amount_input = helpers.ask_the_user_to_input_the_insulin_amount()
+                ifh = InjectionsFileHandler("files/injections.csv")
+                current_datetime = helpers.get_current_date_and_time()
+                injection = Injection(
+                    insulin_type_input, amount_input, current_datetime
+                )
+                ifh.save_new_injection(injection)
+            except KeyboardInterrupt:
+                pass
         elif selection == 6 or selection == None:
             main_menu_exit = True
 
