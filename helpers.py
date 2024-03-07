@@ -110,12 +110,13 @@ def get_total_nutrients_values(response: dict) -> list:
     ).to_string_list()
 
 
-def get_formatted_food_list(response: dict) -> list:
+def get_formatted_food_list(response: dict) -> list | None:
     """
     Formats the list from the Nutrition Analysis API response values and returns it as a list.
 
     Returns:
         list: A list storing each item's nutrients values.
+        None: If there are no items in the Nutrition Analysis API response.
     """
     food_list = []
     for item in response["items"]:
@@ -128,21 +129,23 @@ def get_formatted_food_list(response: dict) -> list:
                 item["protein_g"],
             ).to_string_list()
         )
+    if not food_list:
+        return None
     total_nutrients_list = get_total_nutrients_values(response)
     food_list.append(total_nutrients_list)
     return food_list
 
 
-def print_table_of_nutrients(food_list: list):
+def print_table_of_nutrients(food_list: list | None):
     """
     Prints the table with the retrieved values of nutrients in the food list.
 
     Args:
-        food_list (list): A list of food with nutrients values.
+        food_list (list | None): A list of food with nutrients values or None (if no items were found in the API's response).
     """
-    if len(food_list) == 1:
+    if food_list == None:
         print(
-            f"{Colors.WARNING}  Could not calculate the nutrients since the provided food input was unknown!{Colors.ENDC}\n"
+            f"{Colors.WARNING}  Could not calculate the nutrients because the provided food input was unknown!{Colors.ENDC}\n"
         )
     else:
         print(tabulate(food_list, NUTRIENTS_TABLE_HEADERS, TABLE_STYLE))
@@ -158,12 +161,12 @@ def print_table_of_doses(doses_list: list):
     print(tabulate(doses_list, DOSES_TABLE_HEADERS, TABLE_STYLE))
 
 
-def print_table_of_todays_injections(injections_list: list):
+def print_table_of_todays_injections(injections_list: list | None):
     """
     Prints the table with the information of today's injections.
 
     Args:
-        injections_list (list): A list of today's injections.
+        injections_list (list | None): A list of today's injections or None (if no injections were found).
     """
     if injections_list == None:
         print(f"{Colors.WARNING}  No injections were saved today!\n{Colors.ENDC}")
