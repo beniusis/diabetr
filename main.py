@@ -2,7 +2,8 @@ import os
 import helpers
 from simple_term_menu import TerminalMenu
 from constants import MAIN_MENU_OPTIONS
-from file_handlers import DosesFileHandler
+from colors import Colors
+from file_handlers import DosesFileHandler, InjectionsFileHandler
 
 
 def main():
@@ -33,7 +34,12 @@ def main():
         elif selection == 3:
             ...
         elif selection == 4:
-            ...
+            ifh = InjectionsFileHandler("files/injections.csv")
+            injections = ifh.read_todays_injections()
+            if injections == None:
+                print(f"{Colors.WARNING}No injections were saved today!\n{Colors.ENDC}")
+            else:
+                helpers.print_table_of_todays_injections(injections)
         elif selection == 5:
             ...
         elif selection == 6 or selection == None:

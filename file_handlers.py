@@ -95,7 +95,7 @@ class DosesFileHandler:
                         row["type"],
                         int(row["insulin_amount"]),
                         int(row["carbs_amount"]),
-                    ).to_string_list()
+                    )
                 )
         return doses
 

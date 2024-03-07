@@ -11,6 +11,7 @@ from constants import (
     TABLE_STYLE,
     NUTRIENTS_TABLE_HEADERS,
     DOSES_TABLE_HEADERS,
+    INJECTIONS_TABLE_HEADERS,
 )
 
 
@@ -142,3 +143,7 @@ def print_table_of_nutrients(food_list: list):
 
 def print_table_of_doses(doses_list: list):
     print(tabulate(doses_list, DOSES_TABLE_HEADERS, TABLE_STYLE))
+
+
+def print_table_of_todays_injections(injections_list: list):
+    print(tabulate(injections_list, INJECTIONS_TABLE_HEADERS, TABLE_STYLE))

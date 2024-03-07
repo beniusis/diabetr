@@ -14,3 +14,4 @@ DOSES_FIELDNAMES = ["type", "insulin_amount", "carbs_amount"]
 TABLE_STYLE = "rounded_grid"
 NUTRIENTS_TABLE_HEADERS = ["Food", "Calories", "Fat", "Carbohydrates", "Protein"]
 DOSES_TABLE_HEADERS = ["Type", "Insulin Amount", "For Amount of Carbohydrates"]
+INJECTIONS_TABLE_HEADERS = ["Type", "Amount", "Date and Time"]
