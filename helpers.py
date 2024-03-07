@@ -142,8 +142,20 @@ def print_table_of_nutrients(food_list: list):
 
 
 def print_table_of_doses(doses_list: list):
+    """
+    Prints the table with the information of current insulins doses.
+
+    Args:
+        doses_list (list): A list of current insulin doses.
+    """
     print(tabulate(doses_list, DOSES_TABLE_HEADERS, TABLE_STYLE))
 
 
 def print_table_of_todays_injections(injections_list: list):
+    """
+    Prints the table with the information of today's injections.
+
+    Args:
+        injections_list (list): A list of today's injections.
+    """
     print(tabulate(injections_list, INJECTIONS_TABLE_HEADERS, TABLE_STYLE))
