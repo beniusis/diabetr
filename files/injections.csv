@@ -1,4 +1,4 @@
-insulin_type,units_injected,date_timestamp
+type,amount,timestamp
 short,15,2024-03-03 13:29:00
 short,10,2024-03-04 11:14:30
 short,5,2024-03-04 15:37:39
