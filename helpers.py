@@ -1,4 +1,5 @@
 import requests
+import os
 from datetime import datetime
 from datetime import date
 from tabulate import tabulate
@@ -13,6 +14,10 @@ from constants import (
     DOSES_TABLE_HEADERS,
     INJECTIONS_TABLE_HEADERS,
 )
+
+
+def clear_terminal():
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def convert_string_to_datetime(date_string: str) -> datetime:
@@ -211,6 +216,7 @@ def ask_the_user_to_input_the_insulin_amount() -> int:
 
     Raises:
         ValueError: if `amount` is empty.
+        ValueError: if `amount` is less than 0 or equal to 0.
     """
     while True:
         try:
@@ -223,4 +229,31 @@ def ask_the_user_to_input_the_insulin_amount() -> int:
         except ValueError:
             print(
                 f"{Colors.WARNING}  Amount of insulin must be a valid positive number!{Colors.ENDC}"
+            )
+
+
+def ask_the_user_to_input_the_carbs_amount() -> int:
+    """
+    Prompts the user to input the carbohydrates amount and returns its value.
+
+    Returns:
+        int: Number of carbohydrates (g).
+
+    Raises:
+        ValueError: if `amount` is empty.
+        ValueError: if `amount` is less than 0.
+    """
+    while True:
+        try:
+            amount = int(
+                input(
+                    f"{Colors.HEADER}  Amount of carbohydrates (g) for amount of insulin to inject to: {Colors.ENDC}"
+                )
+            )
+            if not amount or amount <= 0:
+                raise ValueError
+            return amount
+        except ValueError as e:
+            print(
+                f"{Colors.WARNING}  Amount of carbohydrates must be a valid positive number!{Colors.ENDC}"
             )

@@ -1,15 +1,13 @@
-import os
 import helpers
 from simple_term_menu import TerminalMenu
 from constants import MAIN_MENU_OPTIONS
 from colors import Colors
 from file_handlers import DosesFileHandler, InjectionsFileHandler
 from injection import Injection
+from dose import Dose
 
 
 def main():
-    os.system("cls" if os.name == "nt" else "clear")
-
     main_menu = TerminalMenu(
         menu_entries=MAIN_MENU_OPTIONS,
         title="  Main Menu.\n  Press Q or Esc to Quit.\n",
@@ -21,6 +19,7 @@ def main():
 
     while not main_menu_exit:
         selection = main_menu.show()
+        helpers.clear_terminal()
         if selection == 0:
             try:
                 food_input = helpers.ask_user_to_input_the_food()
@@ -34,9 +33,27 @@ def main():
             doses = dfh.read_doses()
             helpers.print_table_of_doses(doses)
         elif selection == 2:
-            ...
+            try:
+                dfh = DosesFileHandler("files/doses.csv")
+                insulin_amount = helpers.ask_the_user_to_input_the_insulin_amount()
+                carbs_amount = helpers.ask_the_user_to_input_the_carbs_amount()
+                dose = Dose("short", insulin_amount, carbs_amount)
+                dfh.update_dose(dose)
+                print(
+                    f"{Colors.OKGREEN}  Short insulin dose has been successfully updated!{Colors.ENDC}"
+                )
+            except KeyboardInterrupt:
+                pass
         elif selection == 3:
-            ...
+            try:
+                insulin_amount = helpers.ask_the_user_to_input_the_insulin_amount()
+                dose = Dose("long", insulin_amount, 0)
+                dfh.update_dose(dose)
+                print(
+                    f"{Colors.OKGREEN}  Long insulin dose has been successfully updated!{Colors.ENDC}"
+                )
+            except KeyboardInterrupt:
+                pass
         elif selection == 4:
             ifh = InjectionsFileHandler("files/injections.csv")
             injections = ifh.read_todays_injections()
