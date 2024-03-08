@@ -1,14 +1,17 @@
 import requests
 import os
-from datetime import datetime
-from datetime import date
 from tabulate import tabulate
 from decouple import config
 from colors import Colors
 from food import Food
+from date_utils import get_current_date_and_time
+from dose import Dose
+from injection import Injection
+from file_handlers import DosesFileHandler, InjectionsFileHandler
+from simple_term_menu import TerminalMenu
 from constants import (
+    MAIN_MENU_OPTIONS,
     NUTRITION_API_BASE_URL,
-    DATETIME_FORMAT,
     TABLE_STYLE,
     NUTRIENTS_TABLE_HEADERS,
     DOSES_TABLE_HEADERS,
@@ -20,38 +23,20 @@ def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def convert_string_to_datetime(date_string: str) -> datetime:
+def init_main_menu() -> TerminalMenu:
     """
-    Converts the date string into a datetime in format YYYY-MM-DD HH:MM:00.
-
-    Args:
-        date_string (str): Date and time string.
+    Returns the TerminalMenu object for Main Menu.
 
     Returns:
-        datetime: Datetime in format YYYY-MM-DD HH:MM:00.
+        TerminalMenu: A Main Menu object.
     """
-    return datetime.fromisoformat(date_string)
-
-
-def get_current_date_and_time() -> datetime:
-    """
-    Gets the current date and time.
-
-    Returns:
-        datetime: Current date and time in format YYYY-MM-DD HH:MM:00.
-    """
-    current_date_string = datetime.now().strftime(DATETIME_FORMAT)
-    return datetime.strptime(current_date_string, DATETIME_FORMAT)
-
-
-def get_current_date() -> date:
-    """
-    Gets the current date.
-
-    Returns:
-        date: Today's date in format YYYY-MM-DD.
-    """
-    return date.today()
+    return TerminalMenu(
+        menu_entries=MAIN_MENU_OPTIONS,
+        title="  Main Menu.\n  Press Q or Esc to Quit.\n",
+        menu_highlight_style=("fg_red",),
+        shortcut_brackets_highlight_style=("fg_red",),
+        shortcut_key_highlight_style=("fg_red",),
+    )
 
 
 def ask_user_to_input_the_food() -> str:
@@ -156,6 +141,66 @@ def print_table_of_nutrients(food_list: list | None):
         print(tabulate(food_list, NUTRIENTS_TABLE_HEADERS, TABLE_STYLE))
 
 
+def get_short_dose_data() -> Dose:
+    """
+    Gets and returns the short insulin data.
+
+    Returns:
+        Dose: An insulin dose object.
+    """
+    dfh = DosesFileHandler("files/doses.csv")
+    doses = dfh.read_doses()
+
+    for dose in doses:
+        if dose.type == "short":
+            return dose
+
+
+def calculate_insulin_amount_for_calculated_carbs(response: dict, dose: Dose) -> int:
+    """
+    Calculates the insulin amount to inject based on the total carbohydrates in a meal.
+
+    Args:
+        response (dict): A Nutrition Analysis API response.
+        dose (Dose): A short insulin dose object.
+
+    Returns:
+        int: Insulin amount to inject for a meal.
+    """
+    total_carbs = sum(item["carbohydrates_total_g"] for item in response["items"])
+    return round(total_carbs / dose.carbs_amount * dose.insulin_amount)
+
+
+def print_insulin_amount_for_calculated_carbs(insulin_amount: int):
+    """
+    Prints the amount of insulin to inject for a meal.
+
+    Args:
+        insulin_amount (int): Amount of insulin to inject.
+    """
+    print(
+        f"{Colors.OKBLUE}  Inject this amount of insulins: {insulin_amount}{Colors.ENDC}"
+    )
+
+
+def init_carbs_calculation():
+    """
+    A function responsible for handling all of the calculation's logic and printing out the result into terminal.
+    """
+    try:
+        food_input = ask_user_to_input_the_food()
+        response = get_nutrition_analysis(food_input)
+        food_list = get_formatted_food_list(response)
+        print_table_of_nutrients(food_list)
+        short_insulin_dose = get_short_dose_data()
+        insulin_amount_to_inject = calculate_insulin_amount_for_calculated_carbs(
+            response, short_insulin_dose
+        )
+        print_insulin_amount_for_calculated_carbs(insulin_amount_to_inject)
+    except KeyboardInterrupt:
+        pass
+
+
 def print_table_of_doses(doses_list: list):
     """
     Prints the table with the information of current insulins doses.
@@ -164,6 +209,15 @@ def print_table_of_doses(doses_list: list):
         doses_list (list): A list of current insulin doses.
     """
     print(tabulate(doses_list, DOSES_TABLE_HEADERS, TABLE_STYLE))
+
+
+def init_show_doses():
+    """
+    A function responsible for handling the logic to print out the current insulin doses information.
+    """
+    dfh = DosesFileHandler("files/doses.csv")
+    doses = dfh.read_doses()
+    print_table_of_doses(doses)
 
 
 def print_table_of_todays_injections(injections_list: list | None):
@@ -177,6 +231,15 @@ def print_table_of_todays_injections(injections_list: list | None):
         print(f"{Colors.WARNING}  No injections were saved today!\n{Colors.ENDC}")
     else:
         print(tabulate(injections_list, INJECTIONS_TABLE_HEADERS, TABLE_STYLE))
+
+
+def init_todays_injections():
+    """
+    A function responsible for handling the logic of showing today's injections data.
+    """
+    ifh = InjectionsFileHandler("files/injections.csv")
+    injections = ifh.read_todays_injections()
+    print_table_of_todays_injections(injections)
 
 
 def ask_the_user_to_input_the_insulin_type() -> str:
@@ -220,9 +283,7 @@ def ask_the_user_to_input_the_insulin_amount() -> int:
     """
     while True:
         try:
-            amount = int(
-                input(f"{Colors.HEADER}  Amount of insulin injected: {Colors.ENDC}")
-            )
+            amount = int(input(f"{Colors.HEADER}  Amount of insulin: {Colors.ENDC}"))
             if not amount or amount <= 0:
                 raise ValueError
             return amount
@@ -257,3 +318,40 @@ def ask_the_user_to_input_the_carbs_amount() -> int:
             print(
                 f"{Colors.WARNING}  Amount of carbohydrates must be a valid positive number!{Colors.ENDC}"
             )
+
+
+def init_change_insulin_dose(type: str):
+    """
+    A function responsible for handling all of the logic for changing insulin dose data.
+
+    Args:
+        type (str): Insulin's type ('short', 'long').
+    """
+    try:
+        dfh = DosesFileHandler("files/doses.csv")
+        insulin_amount = ask_the_user_to_input_the_insulin_amount()
+        carbs_amount = 0
+        if type == "short":
+            carbs_amount = ask_the_user_to_input_the_carbs_amount()
+        dose = Dose(type, insulin_amount, carbs_amount)
+        dfh.update_dose(dose)
+        print(
+            f"{Colors.OKGREEN}  {type.capitalize()} insulin dose has been successfully updated!{Colors.ENDC}"
+        )
+    except KeyboardInterrupt:
+        pass
+
+
+def init_add_injection():
+    """
+    A function responsible for handling all of the logic to save a newly added injection.
+    """
+    try:
+        insulin_type = ask_the_user_to_input_the_insulin_type()
+        insulin_amount = ask_the_user_to_input_the_insulin_amount()
+        ifh = InjectionsFileHandler("files/injections.csv")
+        current_datetime = get_current_date_and_time()
+        injection = Injection(insulin_type, insulin_amount, current_datetime)
+        ifh.save_new_injection(injection)
+    except KeyboardInterrupt:
+        pass
