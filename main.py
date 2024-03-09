@@ -8,6 +8,13 @@ Usage:
     main.py (add|calculate|doses|view)
     main.py update <type>
 
+Commands:
+    menu        Runs the program with the terminal menu functionality.
+    add         Add the new injection.
+    calculate   Calculates carbohydrates of a meal and informs the user with the amount of insulin to inject (suggestion).
+    doses       View current insulin doses.
+    view        View injections that were saved today.
+
 Options:
     -h --help   Shows this screen.
 
