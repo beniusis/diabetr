@@ -9,7 +9,6 @@ from date_utils import get_current_date_and_time
 from dose import Dose
 from injection import Injection
 from file_handlers import DosesFileHandler, InjectionsFileHandler
-from simple_term_menu import TerminalMenu
 from constants import (
     MAIN_MENU_OPTIONS,
     NUTRITION_API_BASE_URL,
@@ -19,28 +18,33 @@ from constants import (
     INJECTIONS_TABLE_HEADERS,
 )
 
+try:
+    from simple_term_menu import TerminalMenu
+
+    def init_main_menu() -> TerminalMenu:
+        """
+        Returns the TerminalMenu object for Main Menu.
+
+        Returns:
+            TerminalMenu: A Main Menu object.
+        """
+        return TerminalMenu(
+            menu_entries=MAIN_MENU_OPTIONS,
+            title="  Main Menu.\n  Press Q or Esc to Quit.\n",
+            menu_highlight_style=("fg_red",),
+            shortcut_brackets_highlight_style=("fg_red",),
+            shortcut_key_highlight_style=("fg_red",),
+        )
+
+except NotImplementedError:
+    pass
+
 
 def clear_terminal():
     """
     Clears the terminal screen.
     """
     os.system("cls" if os.name == "nt" else "clear")
-
-
-def init_main_menu() -> TerminalMenu:
-    """
-    Returns the TerminalMenu object for Main Menu.
-
-    Returns:
-        TerminalMenu: A Main Menu object.
-    """
-    return TerminalMenu(
-        menu_entries=MAIN_MENU_OPTIONS,
-        title="  Main Menu.\n  Press Q or Esc to Quit.\n",
-        menu_highlight_style=("fg_red",),
-        shortcut_brackets_highlight_style=("fg_red",),
-        shortcut_key_highlight_style=("fg_red",),
-    )
 
 
 def ask_user_to_input_the_food() -> str:
@@ -365,7 +369,12 @@ def with_menu():
     """
     Handles the main logic when the program is ran with terminal menu.
     """
-    main_menu = init_main_menu()
+    try:
+        main_menu = init_main_menu()
+    except NameError:
+        sys.exit(
+            f"{Colors.FAIL}Your OS is not supported to run the program with the menu.{Colors.ENDC}"
+        )
     main_menu_exit = False
 
     while not main_menu_exit:
