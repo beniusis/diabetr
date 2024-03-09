@@ -32,10 +32,10 @@ class Dose:
 
     @insulin_amount.setter
     def insulin_amount(self, insulin_amount):
-        if insulin_amount <= 0:
-            raise ValueError("Amount of insulin must be a positive number!")
-        elif not type(insulin_amount) == int:
+        if not type(insulin_amount) == int:
             raise ValueError("Amount of insulin must be a valid number!")
+        elif insulin_amount <= 0:
+            raise ValueError("Amount of insulin must be a positive number!")
         self._insulin_amount = insulin_amount
 
     @property
@@ -44,12 +44,12 @@ class Dose:
 
     @carbs_amount.setter
     def carbs_amount(self, carbs_amount):
-        if carbs_amount < 0:
+        if not type(carbs_amount) == int:
+            raise ValueError("Amount of carbohydrates must be a valid number!")
+        elif carbs_amount < 0:
             raise ValueError("Amount of carbohydrates cannot be a negative number!")
         elif carbs_amount == 0 and self.type == "short":
             raise ValueError("Amount of carbohydrates must be a positive number!")
-        elif not type(carbs_amount) == int:
-            raise ValueError("Amount of carbohydrates must be a valid number!")
         self._carbs_amount = carbs_amount
 
     def to_dict(self):

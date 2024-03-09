@@ -33,10 +33,10 @@ class Injection:
 
     @amount.setter
     def amount(self, amount):
-        if amount <= 0:
-            raise ValueError("Amount of insulin must be a positive number!")
-        elif not type(amount) == int:
+        if not type(amount) == int:
             raise ValueError("Amount of insulin must be a valid number!")
+        elif amount <= 0:
+            raise ValueError("Amount of insulin must be a positive number!")
         self._amount = amount
 
     @property
