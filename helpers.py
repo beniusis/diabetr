@@ -183,7 +183,7 @@ def print_insulin_amount_for_calculated_carbs(insulin_amount: int):
         insulin_amount (int): Amount of insulin to inject.
     """
     print(
-        f"{Colors.OKBLUE}  Inject this amount of insulins: {insulin_amount}{Colors.ENDC}"
+        f"\n{Colors.OKBLUE}  Inject this amount of insulin: {insulin_amount}{Colors.ENDC}\n"
     )
 
 
@@ -340,7 +340,7 @@ def init_change_insulin_dose(type: str):
         dose = Dose(type, insulin_amount, carbs_amount)
         dfh.update_dose(dose)
         print(
-            f"{Colors.OKGREEN}  {type.capitalize()} insulin dose has been successfully updated!{Colors.ENDC}"
+            f"\n{Colors.OKGREEN}  {type.capitalize()} insulin dose has been successfully updated!{Colors.ENDC}\n"
         )
     except KeyboardInterrupt:
         pass
