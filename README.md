@@ -11,3 +11,25 @@
 5. Install the required dependencies: `pip install -r requirements.txt`
 6. Register _[here](https://calorieninjas.com)_ to get your `API` key from `CalorieNinjas`
 7. Rename `rename_to.env` to `.env` and set your `API` key value to `NUTRITION_API_KEY`
+
+## Usage
+
+1. Menu only works with Linux and macOS. Try to run the program with this command: `main.py menu`.
+2. If you're on Windows - run the program with arguments (e.g. `main.py add`)
+
+```
+Diabetr.
+Running a program with menu only works in Linux and macOS.
+
+Usage:
+    main.py -h
+    main.py menu
+    main.py (add|calculate|doses|view)
+    main.py update <type>
+
+Options:
+    -h --help   Shows this screen.
+
+Arguments:
+    <type>      Insulin type (short, long).
+```
