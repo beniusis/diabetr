@@ -60,6 +60,9 @@ class InjectionsFileHandler:
             writer.writerow(injection.to_dict())
 
     def create_file_with_header(self):
+        """
+        Creates a new file with the header.
+        """
         with open(self.path, "w", newline="") as file:
             writer = csv.DictWriter(file, INJECTIONS_FIELDNAMES)
             writer.writeheader()
@@ -117,7 +120,7 @@ class DosesFileHandler:
 
     def create_file_with_default_doses(self):
         """
-        If the CSV file does not exist, it creates it with the default values for the insulin doses.
+        Creates a new CSV file with the default values for the insulin doses.
         """
         short_dose = Dose("short", 1, 10)
         long_dose = Dose("long", 24, 0)

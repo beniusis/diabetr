@@ -1,5 +1,6 @@
 import requests
 import os
+import sys
 from tabulate import tabulate
 from decouple import config
 from colors import Colors
@@ -20,6 +21,9 @@ from constants import (
 
 
 def clear_terminal():
+    """
+    Clears the terminal screen.
+    """
     os.system("cls" if os.name == "nt" else "clear")
 
 
@@ -213,7 +217,7 @@ def print_table_of_doses(doses_list: list):
 
 def init_show_doses():
     """
-    A function responsible for handling the logic to print out the current insulin doses information.
+    A function responsible for handling all of the logic for printing out the current insulin doses information.
     """
     dfh = DosesFileHandler("files/doses.csv")
     doses = dfh.read_doses()
@@ -235,7 +239,7 @@ def print_table_of_todays_injections(injections_list: list | None):
 
 def init_todays_injections():
     """
-    A function responsible for handling the logic of showing today's injections data.
+    A function responsible for handling all of the logic for showing today's injections data.
     """
     ifh = InjectionsFileHandler("files/injections.csv")
     injections = ifh.read_todays_injections()
@@ -355,3 +359,50 @@ def init_add_injection():
         ifh.save_new_injection(injection)
     except KeyboardInterrupt:
         pass
+
+
+def with_menu():
+    """
+    Handles the main logic when the program is ran with terminal menu.
+    """
+    main_menu = init_main_menu()
+    main_menu_exit = False
+
+    while not main_menu_exit:
+        selection = main_menu.show()
+        clear_terminal()
+        if selection == 0:
+            init_carbs_calculation()
+        elif selection == 1:
+            init_show_doses()
+        elif selection == 2:
+            init_change_insulin_dose("short")
+        elif selection == 3:
+            init_change_insulin_dose("long")
+        elif selection == 4:
+            init_todays_injections()
+        elif selection == 5:
+            init_add_injection()
+        elif selection == 6 or selection == None:
+            main_menu_exit = True
+
+
+def without_menu(args: dict):
+    """
+    Handles the main logic when the program is ran through CLI with arguments.
+    """
+    if args["calculate"]:
+        init_carbs_calculation()
+    elif args["doses"]:
+        init_show_doses()
+    elif args["update"]:
+        insulin_type = args["<type>"].lower()
+        if insulin_type not in ["short", "long"]:
+            sys.exit(
+                f"{Colors.FAIL}Insulin type must be either 'short' or 'long'.{Colors.ENDC}"
+            )
+        init_change_insulin_dose(insulin_type)
+    elif args["view"]:
+        init_todays_injections()
+    elif args["add"]:
+        init_add_injection()
